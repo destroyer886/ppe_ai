@@ -7,25 +7,28 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import sys
 import subprocess
-import time
 import fcntl
 import socket
+import shutil
+
 # ============================================================
 # Email Configuration
 # ============================================================
 sender_email = "hexahrplantppe@gmail.com"
 sender_password = "uisq nprg apxv apnn"
-subject = "🚨 PPE Violation Alert - Missing PPE Detected,Updated"
+subject = "🚨 PPE Violation Alert - Missing PPE Detected"
 
 output_dir = 'cropped_images'
 email_delay = 2  # seconds delay between multiple recipients
-
-
 LOCK_FILE = "/tmp/send_mail.lock"
 REPO_URL = "https://github.com/destroyer886/ppe_ai"
 LOCAL_DIR = os.path.dirname(os.path.abspath(__file__))
 BRANCH = "main"
 
+
+# ============================================================
+# Prevent multiple instances
+# ============================================================
 def single_instance_lock():
     """Prevents multiple instances of this script."""
     global lock_fd
@@ -38,12 +41,10 @@ def single_instance_lock():
         print("⚠️ Another instance is already running. Exiting...")
         sys.exit(0)
 
-import os
-import subprocess
-import shutil
 
-LOCAL_DIR = os.path.dirname(os.path.abspath(__file__))
-
+# ============================================================
+# Git / Internet utilities
+# ============================================================
 def get_commit_hash():
     """Returns the current git commit hash, or None if not a git repo. Installs git if missing."""
 
@@ -82,7 +83,6 @@ def get_commit_hash():
     except subprocess.CalledProcessError:
         return None
 
-    
 
 def internet_available(host="8.8.8.8", port=53, timeout=5, retries=3):
     """Check if internet is available (with retries)."""
@@ -139,15 +139,8 @@ def update_repo():
         return False
 
 
-single_instance_lock()
-updated = update_repo()
-
-if updated:
-        print("♻️ Restarting with new code...")
-        python = sys.executable
-        os.execl(python, python, *sys.argv)
 # ============================================================
-# Email Sending Function
+# Email Sending Function (inline + downloadable)
 # ============================================================
 def send_email(image_data, filename, recipient_email, reason):
     msg = MIMEMultipart("related")
@@ -220,11 +213,16 @@ def send_email(image_data, filename, recipient_email, reason):
 
     msg.attach(MIMEText(html_body, 'html'))
 
-    # Attach the image inline
-    image_attachment = MIMEImage(image_data)
-    image_attachment.add_header('Content-ID', '<image1>')
-    image_attachment.add_header('Content-Disposition', 'inline', filename=filename)
-    msg.attach(image_attachment)
+    # Inline image for preview
+    inline_image = MIMEImage(image_data)
+    inline_image.add_header('Content-ID', '<image1>')
+    inline_image.add_header('Content-Disposition', 'inline', filename=filename)
+    msg.attach(inline_image)
+
+    # Downloadable attachment
+    attachment = MIMEImage(image_data)
+    attachment.add_header('Content-Disposition', 'attachment', filename=filename)
+    msg.attach(attachment)
 
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -237,6 +235,7 @@ def send_email(image_data, filename, recipient_email, reason):
     except Exception as e:
         print(f"❌ Failed to send email to {recipient_email}: {e}")
         return False
+
 
 # ============================================================
 # Directory Monitoring Function
@@ -266,12 +265,12 @@ def check_and_send_emails():
                 if not sent:
                     all_sent = False
 
-                # ⏳ Add delay between multiple recipient emails
+                # ⏳ Delay between emails
                 if i < len(recipients) - 1:
                     print(f"⏱️ Waiting {email_delay} seconds before sending next email...")
                     time.sleep(email_delay)
 
-            # Always attempt to delete image after all email attempts
+            # Delete image after attempts
             try:
                 os.remove(image_path)
                 print(f"🗑️ Image {image_file} removed after email attempts.")
@@ -283,10 +282,19 @@ def check_and_send_emails():
 
         time.sleep(10)
 
+
 # ============================================================
 # Script Entry Point
 # ============================================================
 if __name__ == "__main__":
+    single_instance_lock()
+    updated = update_repo()
+
+    if updated:
+        print("♻️ Restarting with new code...")
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     else:
