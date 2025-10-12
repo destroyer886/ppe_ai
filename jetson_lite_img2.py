@@ -39,11 +39,38 @@ def single_instance_lock():
         print("⚠️ Another instance is already running. Exiting...")
         sys.exit(0)
 
+import os
+import subprocess
+import shutil
+
+LOCAL_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def get_commit_hash():
-    """Returns the current git commit hash, or None if not a git repo."""
+    """Returns the current git commit hash, or None if not a git repo. Installs git if missing."""
+
+    # Check if git exists
+    if shutil.which("git") is None:
+        print("⚠️ Git not found. Trying to install without update...")
+        try:
+            subprocess.run(
+                ["sudo", "apt-get", "install", "git", "-y"],
+                check=True
+            )
+            print("✅ Git installed successfully.")
+        except subprocess.CalledProcessError:
+            print("❌ Direct install failed. Trying with apt-get update...")
+            try:
+                subprocess.run(["sudo", "apt-get", "update", "-y"], check=True)
+                subprocess.run(["sudo", "apt-get", "install", "git", "-y"], check=True)
+                print("✅ Git installed after updating package list.")
+            except subprocess.CalledProcessError:
+                print("❌ Failed to install Git even after update.")
+                return None
+
     git_dir = os.path.join(LOCAL_DIR, ".git")
     if not os.path.exists(git_dir):
         return None
+
     try:
         result = subprocess.run(
             ["git", "rev-parse", "HEAD"],
@@ -55,6 +82,7 @@ def get_commit_hash():
         return result.stdout.strip()
     except subprocess.CalledProcessError:
         return None
+
     
 
 def internet_available(host="8.8.8.8", port=53, timeout=5, retries=3):
