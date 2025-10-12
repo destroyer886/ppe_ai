@@ -163,7 +163,7 @@ model = YOLO("ppev5.pt").to('cuda')
 personModel = YOLO("yolov5su.pt").to('cuda')
 VIDEO_SOURCE = config["video"]["source"]
 PER_FRAME = config["tracking"]["frame_loss"]
-TIME_SLEEP = config["tracking"]["sleep"]
+TIME_SLEEP = 3
         # Person tracking dictionary {id: {position, last_seen_time, missing_ppe, alert_sent}}
 person_tracker = {}
 
