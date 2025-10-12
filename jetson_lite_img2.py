@@ -223,7 +223,7 @@ def verify_vest_color(crop):
     ratio = cv2.countNonZero(mask) / (crop.shape[0] * crop.shape[1] + 1e-6)
 
     # If enough vest color is found → treat as vest present
-    return ratio > 0.04   # threshold: 5% pixels
+    return ratio > 0.02   # threshold: 5% pixels
 
 
 
