@@ -16,7 +16,7 @@ import shutil
 # ============================================================
 sender_email = "hexahrplantppe@gmail.com"
 sender_password = "uisq nprg apxv apnn"
-subject = "🚨 PPE Violation Alert - Missing PPE Detected,updated 3.0"
+subject = "🚨 PPE Violation Alert - Missing PPE Detected,updated 4.0"
 
 output_dir = 'cropped_images'
 email_delay = 2  # seconds delay between multiple recipients
