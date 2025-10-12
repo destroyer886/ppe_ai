@@ -101,43 +101,61 @@ def internet_available(host="8.8.8.8", port=53, timeout=5, retries=3):
 
 
 def update_repo():
-    """Pull latest code and return True if updated, else False."""
+    """Pull latest code safely (replace repo files only, not entire folder)."""
     if not internet_available():
         print("🌐 No internet connection. Running existing code...")
         return False
 
-    old_commit = get_commit_hash()
-    if not old_commit:
-        print("📦 Cloning repository...")
+    git_dir = os.path.join(LOCAL_DIR, ".git")
+
+    # If repo exists -> normal pull
+    if os.path.exists(git_dir):
         try:
-            subprocess.run(["git", "clone", REPO_URL, LOCAL_DIR], check=True)
-            return True
-        except subprocess.CalledProcessError:
-            print("❌ Git clone failed — running existing code.")
+            print("🔄 Checking for updates from GitHub...")
+            subprocess.run(["git", "fetch", "origin", BRANCH], cwd=LOCAL_DIR, check=True)
+
+            new_commit = subprocess.run(
+                ["git", "rev-parse", f"origin/{BRANCH}"],
+                cwd=LOCAL_DIR,
+                capture_output=True,
+                text=True,
+                check=True
+            ).stdout.strip()
+
+            old_commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=LOCAL_DIR,
+                capture_output=True,
+                text=True,
+                check=True
+            ).stdout.strip()
+
+            if new_commit != old_commit:
+                print("✅ Update found! Resetting repo to latest commit...")
+                subprocess.run(["git", "reset", "--hard", f"origin/{BRANCH}"], cwd=LOCAL_DIR, check=True)
+                return True
+            else:
+                print("✅ Code is already up to date.")
+                return False
+
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Git update failed ({e}). Running existing code.")
             return False
 
-    try:
-        print("🔄 Checking for updates from GitHub...")
-        subprocess.run(["git", "fetch", "origin", BRANCH], cwd=LOCAL_DIR, check=True)
-        new_commit = subprocess.run(
-            ["git", "rev-parse", f"origin/{BRANCH}"],
-            cwd=LOCAL_DIR,
-            capture_output=True,
-            text=True,
-            check=True
-        ).stdout.strip()
-
-        if new_commit != old_commit:
-            print("✅ Update found! Pulling latest code...")
+    # If .git folder doesn’t exist, reinitialize instead of cloning
+    else:
+        print("⚙️ Initializing git repo in existing directory...")
+        try:
+            subprocess.run(["git", "init"], cwd=LOCAL_DIR, check=True)
+            subprocess.run(["git", "remote", "add", "origin", REPO_URL], cwd=LOCAL_DIR, check=True)
+            subprocess.run(["git", "fetch", "origin", BRANCH], cwd=LOCAL_DIR, check=True)
+            subprocess.run(["git", "checkout", "-f", BRANCH], cwd=LOCAL_DIR, check=True)
             subprocess.run(["git", "reset", "--hard", f"origin/{BRANCH}"], cwd=LOCAL_DIR, check=True)
+            print("✅ Repository initialized and synced.")
             return True
-        else:
-            print("✅ Code is up to date.")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to initialize and sync repository: {e}")
             return False
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Git update failed ({e}). Running existing code.")
-        return False
 
 
 
