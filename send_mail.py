@@ -10,6 +10,9 @@ import subprocess
 import fcntl
 import socket
 import shutil
+import requests
+import json
+
 
 # ============================================================
 # Email Configuration
@@ -25,10 +28,39 @@ REPO_URL = "https://github.com/destroyer886/ppe_ai"
 LOCAL_DIR = os.path.dirname(os.path.abspath(__file__))
 BRANCH = "main"
 
+def send_log(server_name, status, message=None):
+    """
+    Sends a log entry to the Jetson log server API.
+    
+    Args:
+        server_name (str): Name of your server (e.g. "Jetson-Orin").
+        status (str): Status string ("starting", "running", "error", "stopped").
+        message (str, optional): Additional message or info.
+    """
+
+    url = "https://jetson-log.vercel.app/api/logs"
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "serverName": server_name,
+        "status": status,
+        "message": message
+    }
+
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        if response.status_code == 201:
+            print("✅ Log sent successfully.")
+        else:
+            print(f"⚠️ Server responded with status {response.status_code}: {response.text}")
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Error sending log: {e}")
+
 
 # ============================================================
 # Prevent multiple instances
 # ============================================================
+
+send_log("Mail", "starting", "Booting mail system")
 def single_instance_lock():
     """Prevents multiple instances of this script."""
     global lock_fd
@@ -266,6 +298,7 @@ def check_and_send_emails():
         # "dhruvchoudhary88649@gmail.com",
         # "rajiv.bana@hexaclimate.com"
     ]
+    send_log("Mail", "started", "mail system is now running")
 
     while True:
         image_files = [f for f in os.listdir(output_dir) if f.endswith(('.jpg', '.png'))]
