@@ -395,9 +395,9 @@ def process_frame(frame, current_time):
                 violation_duration = current_time - person_tracker[person_id]['violation_start_time']
                 
                 if missing_ppe:
-                     big_cropped_person = frame[by1:by2, bx1:bx2]
+                    big_cropped_person = frame[by1:by2, bx1:bx2]
         
-                     cv2.rectangle(big_cropped_person, 
+                    cv2.rectangle(big_cropped_person, 
                        (x1 - bx1, y1 - by1), 
                        (x2 - bx1, y2 - by1), 
                        (0, 255, 255), 1)
