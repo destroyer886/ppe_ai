@@ -11,6 +11,8 @@ import subprocess
 import time
 import fcntl
 import socket
+import requests
+import json
 # Configure CUDA for OpenCV
 cv2.cuda.setDevice(0)
 
@@ -44,6 +46,37 @@ import subprocess
 import shutil
 
 LOCAL_DIR = os.path.dirname(os.path.abspath(__file__))
+
+import requests
+import json
+
+def send_log(server_name, status, message=None):
+    """
+    Sends a log entry to the Jetson log server API.
+    
+    Args:
+        server_name (str): Name of your server (e.g. "Jetson-Orin").
+        status (str): Status string ("starting", "running", "error", "stopped").
+        message (str, optional): Additional message or info.
+    """
+
+    url = "https://jetson-log.vercel.app/api/logs"
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "serverName": server_name,
+        "status": status,
+        "message": message
+    }
+
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        if response.status_code == 201:
+            print("✅ Log sent successfully.")
+        else:
+            print(f"⚠️ Server responded with status {response.status_code}: {response.text}")
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Error sending log: {e}")
+
 
 def get_commit_hash():
     """Returns the current git commit hash, or None if not a git repo. Installs git if missing."""
@@ -84,7 +117,7 @@ def get_commit_hash():
         return None
 
     
-
+send_log("AI", "starting", "Booting AI model")
 def internet_available(host="8.8.8.8", port=53, timeout=5, retries=3):
     """Check if internet is available (with retries)."""
     for attempt in range(retries):
@@ -408,9 +441,12 @@ def main():
     cap = cv2.VideoCapture(VIDEO_SOURCE, cv2.CAP_FFMPEG)
     # For testing with local file:
    #  cap = cv2.VideoCapture('./Demo2e.mp4')
+    send_log("AI", "started", "Booting AI model")
     
     if not cap.isOpened():
         print("Error: Could not open video stream.")
+        send_log("AI", "Error", "Camera not opened")
+        
         
     
     frame_count = 0
