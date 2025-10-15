@@ -240,8 +240,8 @@ def verify_vest_color(crop):
     upper_red2 = np.array([179, 255, 255])
 
     # Lime / Yellow-Green (fluorescent)
-    lower_lime = np.array([25, 100, 100])
-    upper_lime = np.array([45, 255, 255])
+    lower_lime = np.array([25, 40, 120])   # lower saturation & slightly higher brightness
+    upper_lime = np.array([70, 255, 255])  # extend hue toward greenish-yellow range
 
     # Create masks
     mask_orange = cv2.inRange(hsv, lower_orange, upper_orange)
@@ -363,7 +363,7 @@ def process_frame(frame, current_time):
                     ppe_conf = float(ppe_box.conf[0])
                     
                     if ppe_label == "NO-Safety Vest" or ppe_label == "NO-Hardhat" or ppe_label == "No-Shoes":
-                        if ppe_label == "NO-Safety Vest":
+                        if ppe_label == "NO-Safety Vest" and ppe_conf > 0.35:
                             vest_crop = cropped_person[max(0, py1):min(cropped_person.shape[0], py2),
                                max(0, px1):min(cropped_person.shape[1], px2)]
                             if vest_crop.size > 0 and not verify_vest_color(vest_crop):
