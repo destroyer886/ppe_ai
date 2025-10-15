@@ -19,7 +19,7 @@ import json
 # ============================================================
 sender_email = "hexahrplantppe@gmail.com"
 sender_password = "uisq nprg apxv apnn"
-subject = "🚨 PPE Violation Alert - Missing PPE Detected,updated 4.0"
+subject = "🚨 PPE Violation Alert - Missing PPE Detected,updated 5.0"
 
 output_dir = 'cropped_images'
 email_delay = 2  # seconds delay between multiple recipients
@@ -243,7 +243,7 @@ def send_email(image_data, filename, recipient_email, reason):
       </head>
       <body>
         <div class="container">
-          <div class="header">🚨 PPE Violation Alert 4.0</div>
+          <div class="header">🚨 PPE Violation Alert 5.0</div>
           <div class="reason">
             A person was detected without PPE.<br>
             <b>Reason:</b> {reason}
