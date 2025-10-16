@@ -363,7 +363,7 @@ def process_frame(frame, current_time):
                     ppe_conf = float(ppe_box.conf[0])
                     
                     if ppe_label == "NO-Safety Vest" or ppe_label == "NO-Hardhat" or ppe_label == "No-Shoes":
-                        if ppe_label == "NO-Safety Vest" and ppe_conf > 0.35:
+                        if ppe_label == "NO-Safety Vest" and ppe_conf > 0.5:
                             vest_crop = cropped_person[max(0, py1):min(cropped_person.shape[0], py2),
                                max(0, px1):min(cropped_person.shape[1], px2)]
                             if vest_crop.size > 0 and not verify_vest_color(vest_crop):
