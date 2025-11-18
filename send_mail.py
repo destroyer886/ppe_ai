@@ -293,8 +293,8 @@ def send_email(image_data, filename, recipient_email, reason):
 # ============================================================
 def check_and_send_emails():
     recipients = [
-        "ashish.kamboj@madrecert.com",
-        "zishan@madrecert.com",
+        "deepak.k@sunkonnect.co",
+        "leela.achanta@hexaclimate.com",
         # "dhruvchoudhary88649@gmail.com",
         # "rajiv.bana@hexaclimate.com"
     ]
