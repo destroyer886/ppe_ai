@@ -293,9 +293,9 @@ def send_email(image_data, filename, recipient_email, reason):
 # ============================================================
 def check_and_send_emails():
     recipients = [
-        "deepak.k@sunkonnect.co",
-        # "dhruvchoudhary88649@gmail.com",
-        # "rajiv.bana@hexaclimate.com"
+        "Abul.f@sunkonnect.co",
+        "mantu.p@sunkonnect.co",
+        "Rajiv.bana@hexaclimate.com"   
     ]
     send_log("Mail", "started", "mail system is now running")
 
