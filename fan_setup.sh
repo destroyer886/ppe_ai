@@ -1,5 +1,3 @@
-Systemd pe ye chalana hai 
-
 cat << 'EOF' > /usr/local/bin/jetson_init.sh
 #!/bin/bash
 # Set Fan to Max
@@ -12,4 +10,4 @@ fi
 # nmcli con up "Wired connection 1"
 EOF
 
-chmod +x /usr/local/bin/jetson_init.sh
+
