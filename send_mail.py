@@ -295,7 +295,8 @@ def check_and_send_emails():
     recipients = [
         "Abul.f@sunkonnect.co",
         "mantu.p@sunkonnect.co",
-        "Rajiv.bana@hexaclimate.com"   
+        "Rajiv.bana@hexaclimate.com",
+        "surjeet.k@sunkonnect.co"
     ]
     send_log("Mail", "started", "mail system is now running")
 
