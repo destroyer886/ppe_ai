@@ -236,7 +236,7 @@ def send_email(image_data, filename, recipient_email, reason):
               <!-- Reason Box -->
               <div style="background:#fff3f3;border-left:5px solid #ff4b2b;padding:15px;margin-bottom:20px;border-radius:6px;">
                 <strong style="color:#d63031;">Reason:</strong>
-                <span style="color:#333;"> ${reason} </span>
+                <span style="color:#333;"> {reason} </span>
               </div>
 
               <!-- Info Grid -->
@@ -251,7 +251,7 @@ def send_email(image_data, filename, recipient_email, reason):
                 </tr>
                 <tr style="background:#f9fafb;">
                   <td style="font-weight:bold;color:#555;">Time</td>
-                  <td style="color:#333;">${datetime.now().strftime("%c")}</td>
+                  <td style="color:#333;">{datetime.now().strftime("%c")}</td>
                 </tr>
               </table>
 
@@ -273,7 +273,7 @@ def send_email(image_data, filename, recipient_email, reason):
           <!-- Footer -->
           <tr>
             <td style="background:#f4f6f8;padding:15px;text-align:center;font-size:12px;color:#999;">
-              © ${datetime.now().year} PPE Monitoring System | Industrial Safety Division
+              © {datetime.now().year} PPE Monitoring System | Industrial Safety Division
             </td>
           </tr>
 
@@ -290,13 +290,21 @@ def send_email(image_data, filename, recipient_email, reason):
     msg.attach(MIMEText(html_body, 'html'))
 
     # Inline image for preview
-    inline_image = MIMEImage(image_data)
+    if filename.lower().endswith(".jpg") or filename.lower().endswith(".jpeg"):
+     subtype = "jpeg"
+    elif filename.lower().endswith(".png"):
+     subtype = "png"
+    else:
+     print(f"❌ Unsupported image format: {filename}")
+     return False
+
+    inline_image = MIMEImage(image_data, _subtype=subtype)
     inline_image.add_header('Content-ID', '<image1>')
     inline_image.add_header('Content-Disposition', 'inline', filename=filename)
     msg.attach(inline_image)
 
     # Downloadable attachment
-    attachment = MIMEImage(image_data)
+    attachment = MIMEImage(image_data, _subtype=subtype)
     attachment.add_header('Content-Disposition', 'attachment', filename=filename)
     msg.attach(attachment)
 
