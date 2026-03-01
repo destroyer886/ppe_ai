@@ -273,7 +273,7 @@ def send_email(image_data, filename, recipient_email, reason):
           <!-- Footer -->
           <tr>
             <td style="background:#f4f6f8;padding:15px;text-align:center;font-size:12px;color:#999;">
-              © ${new Date().getFullYear()} PPE Monitoring System | Industrial Safety Division
+              © ${datetime.now().year} PPE Monitoring System | Industrial Safety Division
             </td>
           </tr>
 
