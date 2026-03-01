@@ -17,8 +17,8 @@ import json
 # ============================================================
 # Email Configuration
 # ============================================================
-sender_email = "hexahrplantppe@gmail.com"
-sender_password = "uisq nprg apxv apnn"
+sender_email = "hexahse@gmail.com"
+sender_password = "ukqo jmoo pvso snpy"
 subject = "🚨 PPE Violation Alert - Missing PPE Detected,updated 5.1"
 
 output_dir = 'cropped_images'
