@@ -201,65 +201,89 @@ def send_email(image_data, filename, recipient_email, reason):
 
     # HTML Email Body
     html_body = f"""
-    <html>
-      <head>
-        <style>
-          body {{
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 20px;
-          }}
-          .container {{
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-          }}
-          .header {{
-            font-size: 18px;
-            font-weight: bold;
-            color: #c0392b;
-          }}
-          .reason {{
-            font-size: 16px;
-            margin-top: 10px;
-            color: #333;
-          }}
-          .footer {{
-            margin-top: 20px;
-            font-size: 12px;
-            color: #777;
-          }}
-          img {{
-            max-width: 100%;
-            height: auto;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            margin-top: 15px;
-            cursor: pointer;
-          }}
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">🚨 PPE Violation Alert 5.1</div>
-          <div class="reason">
-            A person was detected without PPE.<br>
-            <b>Reason:</b> {reason}
-          </div>
-          <div>
-            <p>Please find the detected image below (click to view full size):</p>
-            <a href="cid:image1">
-              <img src="cid:image1" alt="PPE Violation Image">
-            </a>
-          </div>
-          <div class="footer">
-            This is an automated message. Please do not reply.
-          </div>
-        </div>
-      </body>
-    </html>
+   <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8;padding:20px 0;">
+    <tr>
+      <td align="center">
+
+        <!-- Card Container -->
+        <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(90deg,#ff4b2b,#ff416c);padding:20px;text-align:center;">
+              <h2 style="color:#ffffff;margin:0;font-size:22px;letter-spacing:1px;">
+                ⚠ PPE SAFETY ALERT
+              </h2>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:30px;">
+
+              <h3 style="color:#ff4b2b;margin-top:0;">
+                PPE Violation Detected
+              </h3>
+
+              <!-- Reason Box -->
+              <div style="background:#fff3f3;border-left:5px solid #ff4b2b;padding:15px;margin-bottom:20px;border-radius:6px;">
+                <strong style="color:#d63031;">Reason:</strong>
+                <span style="color:#333;"> ${reason} </span>
+              </div>
+
+              <!-- Info Grid -->
+              <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;margin-bottom:20px;">
+                <tr style="background:#f9fafb;">
+                  <td style="font-weight:bold;color:#555;">Location</td>
+                  <td style="color:#333;">Sirsa</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:bold;color:#555;">Machine</td>
+                  <td style="color:#333;">Sirsa-B01</td>
+                </tr>
+                <tr style="background:#f9fafb;">
+                  <td style="font-weight:bold;color:#555;">Time</td>
+                  <td style="color:#333;">${new Date().toLocaleString()}</td>
+                </tr>
+              </table>
+
+              <!-- Image Section -->
+              <div style="text-align:center;margin-top:20px;">
+                <img src="cid:image1"
+                     style="max-width:100%;border-radius:10px;border:1px solid #ddd;box-shadow:0 2px 10px rgba(0,0,0,0.1);" />
+              </div>
+
+              <!-- Footer Note -->
+              <p style="margin-top:25px;font-size:13px;color:#777;text-align:center;">
+                This is an automated safety monitoring alert.
+                Please take immediate corrective action.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#f4f6f8;padding:15px;text-align:center;font-size:12px;color:#999;">
+              © ${new Date().getFullYear()} PPE Monitoring System | Industrial Safety Division
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
     """
 
     msg.attach(MIMEText(html_body, 'html'))
