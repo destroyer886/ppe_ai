@@ -12,6 +12,7 @@ import socket
 import shutil
 import requests
 import json
+from datetime import datetime
 
 
 # ============================================================
@@ -250,7 +251,7 @@ def send_email(image_data, filename, recipient_email, reason):
                 </tr>
                 <tr style="background:#f9fafb;">
                   <td style="font-weight:bold;color:#555;">Time</td>
-                  <td style="color:#333;">${new Date().toLocaleString()}</td>
+                  <td style="color:#333;">${datetime.now().strftime("%c")}</td>
                 </tr>
               </table>
 
